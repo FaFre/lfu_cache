@@ -3,6 +3,6 @@
 /// More dartdocs go here.
 library lfu_cache;
 
-export 'src/lfu_cache_base.dart';
+export 'src/lfu_cache.dart';
 
 // TODO: Export any libraries intended for clients of this package.

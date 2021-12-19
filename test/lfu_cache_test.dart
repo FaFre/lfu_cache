@@ -2,15 +2,83 @@ import 'package:lfu_cache/lfu_cache.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
-    final awesome = Awesome();
+  test('drop first inserted element', () {
+    final cache = LFUCache(2, 1);
 
-    setUp(() {
-      // Additional setup goes here.
+    cache.put(1, true);
+    cache.put(2, true);
+    cache.put(3, true);
+
+    expect(cache.get(1), isNull);
+    expect(cache.get(2), isNotNull);
+    expect(cache.get(3), isNotNull);
+  });
+
+  test('eviction count', () {
+    final cache = LFUCache(2, 2);
+
+    cache.put(1, true);
+    cache.put(2, true);
+    cache.put(3, true);
+
+    expect(cache.get(1), isNull);
+    expect(cache.get(2), isNull);
+    expect(cache.get(3), isNotNull);
+  });
+
+  test('consider access count', () {
+    final cache = LFUCache<int, bool>(4, 2);
+
+    cache.put(1, true);
+    cache.put(2, true);
+    cache.put(3, true);
+    cache.put(4, true);
+
+    //Do not optimize gets away
+    final nonOptimize = [
+      cache.get(1),
+      cache.get(1),
+      cache.get(3),
+    ];
+
+    cache.put(5, true);
+
+    expect(nonOptimize.length, 3);
+
+    expect(cache.get(1), isNotNull);
+    expect(cache.get(2), isNull);
+    expect(cache.get(3), isNotNull);
+    expect(cache.get(4), isNull);
+    expect(cache.get(5), isNotNull);
+  });
+
+  test('keep access count', () {
+    final cache = LFUCache<int, bool>(3, 1);
+    cache.put(1, true);
+    cache.put(2, true);
+    cache.put(3, true);
+    final val = cache.get(1);
+    cache.put(4, true);
+    cache.put(5, true);
+
+    expect(val, isTrue);
+    expect(cache.get(1), isNotNull);
+  });
+
+  test('getOrPut', () {
+    final cache = LFUCache<int, bool>(3, 1);
+
+    var count = 0;
+    final first = cache.getOrPut(1, () {
+      count++;
+      return true;
+    });
+    final second = cache.getOrPut(1, () {
+      count++;
+      return true;
     });
 
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
-    });
+    expect(first, equals(second));
+    expect(count, 1);
   });
 }
