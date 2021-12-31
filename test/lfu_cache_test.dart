@@ -81,4 +81,26 @@ void main() {
     expect(first, equals(second));
     expect(count, 1);
   });
+
+  test('getOrPutAsync', () async {
+    final cache = LFUCache<int, bool>(3, 1);
+
+    var count = 0;
+    final first = await cache.getOrPutAsync(1, () {
+      return Future.delayed(Duration(milliseconds: 50)).then((_) {
+        count++;
+        return true;
+      });
+    });
+
+    final second = await cache.getOrPutAsync(1, () {
+      return Future.delayed(Duration(milliseconds: 50)).then((_) {
+        count++;
+        return true;
+      });
+    });
+
+    expect(first, equals(second));
+    expect(count, 1);
+  });
 }

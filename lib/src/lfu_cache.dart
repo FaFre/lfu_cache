@@ -115,6 +115,21 @@ class LFUCache<K, V> {
     return value;
   }
 
+  Future<V?> getOrPutAsync(K key, Future<V?> Function() valueFunc) {
+    final cached = get(key);
+    if (cached != null) {
+      return Future.value(cached);
+    }
+
+    return valueFunc().then((value) {
+      if (value != null) {
+        put(key, value);
+      }
+
+      return value;
+    });
+  }
+
   V? remove(K key) {
     final currentNode = _cache.remove(key);
 
