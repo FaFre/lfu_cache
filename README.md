@@ -1,39 +1,32 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# lfu_cache
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+This is a high performance LFU cache implementation.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+The implementation is heavily inspired by the Java implementation of Apache's ActiveMQ cache.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+LFU cache implementation based on http://dhruvbird.com/lfu.pdf, with some notable differences:
 
-## Getting started
+- Frequency list is stored as an array with no next/prev pointers between nodes: looping over the array should be faster and more CPU-cache friendly than using an ad-hoc linked-pointers structure.
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+- The max frequency is capped at the cache size to avoid creating more and more frequency list entries, and all elements residing in the max frequency entry are re-positioned in the frequency entry linked set in order to put most recently accessed elements ahead of less recently ones, which will be collected sooner.
+
+- The eviction factor determines how many elements (more specifically, the percentage of) will be evicted.
+As a consequence, this cache runs in *amortized* O(1) time (considering the worst case of having the lowest frequency at 0 and having to evict all elements).
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
-const like = 'sample';
-```
+const maxCacheSize = 2;
+const evictionCount = 1;
 
-## Additional information
+final cache = LFUCache(maxCacheSize, evictionCount);
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+cache.put(1, true);
+cache.put(2, true);
+cache.put(3, true);
+
+print(cache.get(1)); //null
+``````
+

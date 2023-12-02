@@ -1,7 +1,7 @@
 name: lfu_cache
-description: A starting point for Dart libraries or applications.
+description: High performance LFU cache implementation
 version: 1.0.0
-# homepage: https://www.example.com
+homepage: https://github.com/FaFre/lfu_cache
 
 environment:
   sdk: '>3.0.0 <4.0.0'
