@@ -45,6 +45,11 @@ class LFUCache<K, V> {
         _maxFrequency = maxCacheSize - 1,
         assert(evictionCount > 0);
 
+  /// Puts a key-value pair into the cache.
+  ///
+  /// If the cache is full, it may trigger evictions based on the configured eviction count.
+  ///
+  /// Returns the previous value associated with the key, if any.
   V? put(K key, V value) {
     V? oldValue;
 
@@ -69,6 +74,11 @@ class LFUCache<K, V> {
     return oldValue;
   }
 
+  /// Retrieves the value associated with the given key.
+  ///
+  /// If the key is not present in the cache, returns `null`.
+  ///
+  /// The frequency of the accessed key is updated, and eviction may occur.
   V? get(K key) {
     final currentNode = _cache[key];
     if (currentNode != null) {
@@ -104,6 +114,11 @@ class LFUCache<K, V> {
     }
   }
 
+  /// Retrieves the value associated with the key or inserts a new value if the key is not present.
+  ///
+  /// If the key is already present, its frequency is updated, and eviction may occur.
+  ///
+  /// Returns the value associated with the key after the operation.
   V? getOrPut(K key, V? Function() valueFunc) {
     final cached = get(key);
     if (cached != null) {
@@ -118,6 +133,11 @@ class LFUCache<K, V> {
     return value;
   }
 
+  /// Asynchronously retrieves the value associated with the key or inserts a new value if the key is not present.
+  ///
+  /// If the key is already present, its frequency is updated, and eviction may occur.
+  ///
+  /// Returns a Future that completes with the value associated with the key after the operation.
   Future<V?> getOrPutAsync(K key, Future<V?> Function() valueFunc) {
     final cached = get(key);
     if (cached != null) {
@@ -133,6 +153,9 @@ class LFUCache<K, V> {
     });
   }
 
+  /// Removes the key and its associated value from the cache.
+  ///
+  /// Returns the value associated with the removed key, if any.
   V? remove(K key) {
     final currentNode = _cache.remove(key);
 
@@ -149,6 +172,9 @@ class LFUCache<K, V> {
     }
   }
 
+  /// Retrieves the frequency of the given key in the cache.
+  ///
+  /// Returns 0 if the key is not present in the cache.
   int frequencyOf(K key) {
     final node = _cache[key];
 
