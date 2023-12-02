@@ -40,8 +40,7 @@ class LFUCache<K, V> {
   final int _maxFrequency;
 
   LFUCache(this.maxCacheSize, this.evictionCount)
-      : _frequencyList =
-            List.filled(maxCacheSize, LinkedHashSet(), growable: false),
+      : _frequencyList = List.filled(maxCacheSize, LinkedHashSet()),
         _lowestFrequency = 0,
         _maxFrequency = maxCacheSize - 1,
         assert(evictionCount > 0);
@@ -71,7 +70,7 @@ class LFUCache<K, V> {
   }
 
   V? get(K key) {
-    var currentNode = _cache[key];
+    final currentNode = _cache[key];
     if (currentNode != null) {
       final currentFrequency = currentNode.frequency;
       if (currentFrequency < _maxFrequency) {
@@ -81,7 +80,11 @@ class LFUCache<K, V> {
         final newNodes = _frequencyList[nextFrequency];
 
         _moveToNextFrequency(
-            currentNode, nextFrequency, currentNodes, newNodes);
+          currentNode,
+          nextFrequency,
+          currentNodes,
+          newNodes,
+        );
 
         _cache[key] = currentNode;
 
@@ -182,10 +185,11 @@ class LFUCache<K, V> {
   }
 
   void _moveToNextFrequency(
-      _CacheNode<K, V> currentNode,
-      int nextFrequency,
-      LinkedHashSet<_CacheNode<K, V>> currentNodes,
-      LinkedHashSet<_CacheNode<K, V>> newNodes) {
+    _CacheNode<K, V> currentNode,
+    int nextFrequency,
+    LinkedHashSet<_CacheNode<K, V>> currentNodes,
+    LinkedHashSet<_CacheNode<K, V>> newNodes,
+  ) {
     currentNodes.remove(currentNode);
     newNodes.add(currentNode);
     currentNode.frequency = nextFrequency;

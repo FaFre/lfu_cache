@@ -87,14 +87,14 @@ void main() {
 
     var count = 0;
     final first = await cache.getOrPutAsync(1, () {
-      return Future.delayed(Duration(milliseconds: 50)).then((_) {
+      return Future.delayed(const Duration(milliseconds: 50)).then((_) {
         count++;
         return true;
       });
     });
 
     final second = await cache.getOrPutAsync(1, () {
-      return Future.delayed(Duration(milliseconds: 50)).then((_) {
+      return Future.delayed(const Duration(milliseconds: 50)).then((_) {
         count++;
         return true;
       });
