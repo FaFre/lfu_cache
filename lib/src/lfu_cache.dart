@@ -45,6 +45,12 @@ class LFUCache<K, V> {
         _maxFrequency = maxCacheSize - 1,
         assert(evictionCount > 0);
 
+  /// Checks if a key exists in the cache.
+  bool contains(K key) => _cache.containsKey(key);
+
+  /// Returns a set of all keys currently in the cache.
+  Set<K> keys() => _cache.keys.toSet();
+
   /// Puts a key-value pair into the cache.
   ///
   /// If the cache is full, it may trigger evictions based on the configured eviction count.
